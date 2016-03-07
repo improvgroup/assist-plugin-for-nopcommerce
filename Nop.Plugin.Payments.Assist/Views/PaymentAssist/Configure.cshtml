@@ -1,0 +1,72 @@
+﻿@{
+    Layout = "";
+}
+@model ConfigurationModel
+@using Nop.Plugin.Payments.Assist.Models;
+@using Nop.Web.Framework;
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <table class="adminContent">
+        <tr>
+            <td colspan="2">
+                <ul>
+                    <li><b>Должна быть активирована опция «Возвращаться в магазин по URL для возврата» на
+                        https://secure.assist.ru/members/ в разделе «Дизайн страниц» </b></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td class="adminTitle">
+                @Html.NopLabelFor(model => model.GatewayUrl):
+            </td>
+            <td class="adminData">
+                @Html.EditorFor(model => model.GatewayUrl)
+                @Html.ValidationMessageFor(model => model.GatewayUrl)
+            </td>
+        </tr>
+        <tr>
+            <td class="adminTitle">
+                @Html.NopLabelFor(model => model.ShopId):
+            </td>
+            <td class="adminData">
+                @Html.EditorFor(model => model.ShopId)
+                @Html.ValidationMessageFor(model => model.ShopId)
+            </td>
+        </tr>
+        <tr>
+            <td class="adminTitle">
+                @Html.NopLabelFor(model => model.AuthorizeOnly):
+            </td>
+            <td class="adminData">
+                @Html.EditorFor(model => model.AuthorizeOnly)
+                @Html.ValidationMessageFor(model => model.AuthorizeOnly)
+            </td>
+        </tr>
+        <tr>
+            <td class="adminTitle">
+                @Html.NopLabelFor(model => model.TestMode):
+            </td>
+            <td class="adminData">
+                @Html.EditorFor(model => model.TestMode)
+                @Html.ValidationMessageFor(model => model.TestMode)
+            </td>
+        </tr>
+        <tr>
+            <td class="adminTitle">
+                @Html.NopLabelFor(model => model.AdditionalFee):
+            </td>
+            <td class="adminData">
+                @Html.EditorFor(model => model.AdditionalFee)
+                @Html.ValidationMessageFor(model => model.AdditionalFee)
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <button type="submit" name="save" value="save" class="k-button">
+                    Save</button>
+            </td>
+        </tr>
+    </table>
+    
+}
