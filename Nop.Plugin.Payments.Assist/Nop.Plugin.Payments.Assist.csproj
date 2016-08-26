@@ -82,7 +82,6 @@
     <Compile Include="AssistPaymentSettings.cs" />
     <Compile Include="Controllers\PaymentAssistController.cs" />
     <Compile Include="Models\ConfigurationModel.cs" />
-    <Compile Include="Models\PaymentInfoModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RouteProvider.cs" />
   </ItemGroup>
@@ -104,6 +103,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Views\PaymentAssist\Configure.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -119,9 +121,6 @@
   <ItemGroup>
     <Content Include="Description.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="logo.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Notes.txt" />
   </ItemGroup>

@@ -9,8 +9,8 @@ namespace Nop.Plugin.Payments.Assist.Models
         [NopResourceDisplayName("Plugins.Payments.Assist.GatewayUrl")]
         public string GatewayUrl { get; set; }
 
-        [NopResourceDisplayName("Plugins.Payments.Assist.ShopId")]
-        public string ShopId { get; set; }
+        [NopResourceDisplayName("Plugins.Payments.Assist.MerchantId")]
+        public string MerchantId { get; set; }
 
         [NopResourceDisplayName("Plugins.Payments.Assist.AuthorizeOnly")]
         public bool AuthorizeOnly { get; set; }

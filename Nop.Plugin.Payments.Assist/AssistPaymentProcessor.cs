@@ -1,13 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Net;
-using System.Security.Cryptography;
-using System.Text;
 using System.Web.Routing;
 using Nop.Core;
-using Nop.Core.Domain;
 using Nop.Core.Domain.Directory;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Payments;
@@ -27,25 +22,28 @@ namespace Nop.Plugin.Payments.Assist
     public class AssistPaymentProcessor : BasePlugin, IPaymentMethod
     {
         #region Fields
-
-        private readonly AssistPaymentSettings _assistPaymentSettings;
+        
         private readonly ICurrencyService _currencyService;
-        private readonly CurrencySettings _currencySettings;
         private readonly ISettingService _settingService;
         private readonly IWebHelper _webHelper;
+        private readonly CurrencySettings _currencySettings;
+        private readonly AssistPaymentSettings _assistPaymentSettings;
 
         #endregion
 
         #region Ctor
 
-        public AssistPaymentProcessor(AssistPaymentSettings assistPaymentSettings, ICurrencyService currencyService,
-            CurrencySettings currencySettings, ISettingService settingService, IWebHelper webHelper)
+        public AssistPaymentProcessor( ICurrencyService currencyService,
+            ISettingService settingService, 
+            IWebHelper webHelper, 
+            AssistPaymentSettings assistPaymentSettings, 
+            CurrencySettings currencySettings)
         {
-            this._assistPaymentSettings = assistPaymentSettings;
             this._currencyService = currencyService;
-            this._currencySettings = currencySettings;
             this._settingService = settingService;
             this._webHelper = webHelper;
+            this._assistPaymentSettings = assistPaymentSettings;
+            this._currencySettings = currencySettings;
         }
 
         #endregion
@@ -59,8 +57,8 @@ namespace Nop.Plugin.Payments.Assist
         /// <returns>Process payment result</returns>
         public ProcessPaymentResult ProcessPayment(ProcessPaymentRequest processPaymentRequest)
         {
-            var result = new ProcessPaymentResult();
-            result.NewPaymentStatus = PaymentStatus.Pending;
+            var result = new ProcessPaymentResult {NewPaymentStatus = PaymentStatus.Pending};
+
             return result;
         }
 
@@ -70,21 +68,20 @@ namespace Nop.Plugin.Payments.Assist
         /// <param name="postProcessPaymentRequest">Payment info required for an order processing</param>
         public void PostProcessPayment(PostProcessPaymentRequest postProcessPaymentRequest)
         {
-            var post = new RemotePost();
-
-            post.FormName = "AssistPaymentForm";
-            post.Url = _assistPaymentSettings.GatewayUrl;
-            post.Method = "POST";
-
-            post.Add("Shop_IDP", _assistPaymentSettings.ShopId);
-            post.Add("Order_IDP", postProcessPaymentRequest.Order.Id.ToString());
-            post.Add("Subtotal_P", String.Format(CultureInfo.InvariantCulture, "{0:0.00}", postProcessPaymentRequest.Order.OrderTotal));
-
-            post.Add("Currency", _currencyService.GetCurrencyById(_currencySettings.PrimaryStoreCurrencyId).CurrencyCode);
+            var post = new RemotePost
+            {
+                FormName = "AssistPaymentForm",
+                Url = _assistPaymentSettings.TestMode ? "https://test.paysecure.ru/pay/order.cfm" : _assistPaymentSettings.GatewayUrl,
+                Method = "POST"
+            };
+            
+            post.Add("Merchant_ID", _assistPaymentSettings.MerchantId);
+            post.Add("OrderNumber", postProcessPaymentRequest.Order.Id.ToString());
+            post.Add("OrderAmount", String.Format(CultureInfo.InvariantCulture, "{0:0.00}", postProcessPaymentRequest.Order.OrderTotal));
+            post.Add("OrderCurrency", _currencyService.GetCurrencyById(_currencySettings.PrimaryStoreCurrencyId).CurrencyCode);
             post.Add("Delay", _assistPaymentSettings.AuthorizeOnly ? "1" : "0");
-            post.Add("URL_RETURN", _webHelper.GetStoreLocation(false));
+            post.Add("URL_RETURN", String.Format("{0}Plugins/PaymentAssist/Fail", _webHelper.GetStoreLocation(false)));
             post.Add("URL_RETURN_OK", String.Format("{0}Plugins/PaymentAssist/Return", _webHelper.GetStoreLocation(false)));
-
             post.Add("FirstName", postProcessPaymentRequest.Order.BillingAddress.FirstName);
             post.Add("LastName", postProcessPaymentRequest.Order.BillingAddress.LastName);
             post.Add("Email", postProcessPaymentRequest.Order.BillingAddress.Email);
@@ -94,20 +91,17 @@ namespace Nop.Plugin.Payments.Assist
             post.Add("Phone", postProcessPaymentRequest.Order.BillingAddress.PhoneNumber);
 
             var state = postProcessPaymentRequest.Order.BillingAddress.StateProvince;
+
             if (state != null)
             {
                 post.Add("State", state.Abbreviation);
             }
 
             var country = postProcessPaymentRequest.Order.BillingAddress.Country;
+
             if (country != null)
             {
                 post.Add("Country", country.ThreeLetterIsoCode);
-            }
-
-            if (_assistPaymentSettings.TestMode)
-            {
-                post.Add("DemoResult", "AS000");
             }
 
             post.Post();
@@ -144,7 +138,9 @@ namespace Nop.Plugin.Payments.Assist
         public CapturePaymentResult Capture(CapturePaymentRequest capturePaymentRequest)
         {
             var result = new CapturePaymentResult();
+
             result.AddError("Capture method not supported");
+
             return result;
         }
 
@@ -156,7 +152,9 @@ namespace Nop.Plugin.Payments.Assist
         public RefundPaymentResult Refund(RefundPaymentRequest refundPaymentRequest)
         {
             var result = new RefundPaymentResult();
+
             result.AddError("Refund method not supported");
+
             return result;
         }
 
@@ -168,7 +166,9 @@ namespace Nop.Plugin.Payments.Assist
         public VoidPaymentResult Void(VoidPaymentRequest voidPaymentRequest)
         {
             var result = new VoidPaymentResult();
+
             result.AddError("Void method not supported");
+
             return result;
         }
 
@@ -180,7 +180,9 @@ namespace Nop.Plugin.Payments.Assist
         public ProcessPaymentResult ProcessRecurringPayment(ProcessPaymentRequest processPaymentRequest)
         {
             var result = new ProcessPaymentResult();
+
             result.AddError("Recurring payment not supported");
+
             return result;
         }
 
@@ -192,7 +194,9 @@ namespace Nop.Plugin.Payments.Assist
         public CancelRecurringPaymentResult CancelRecurringPayment(CancelRecurringPaymentRequest cancelPaymentRequest)
         {
             var result = new CancelRecurringPaymentResult();
+
             result.AddError("Recurring payment not supported");
+
             return result;
         }
 
@@ -214,10 +218,7 @@ namespace Nop.Plugin.Payments.Assist
                 return false;
 
             //let's ensure that at least 1 minute passed after order is placed
-            if ((DateTime.UtcNow - order.CreatedOnUtc).TotalMinutes < 1)
-                return false;
-
-            return true;
+            return !((DateTime.UtcNow - order.CreatedOnUtc).TotalMinutes < 1);
         }
 
         /// <summary>
@@ -255,20 +256,21 @@ namespace Nop.Plugin.Payments.Assist
         {
             var settings = new AssistPaymentSettings()
             {
-                GatewayUrl = "https://test.assist.ru/shops/cardpayment.cfm",
-                ShopId = "",
+                GatewayUrl = "https://test.paysecure.ru/pay/order.cfm",
+                MerchantId = "",
                 AuthorizeOnly = false,
-                TestMode = false,
+                TestMode = true,
                 AdditionalFee = 0,
             };
+
             _settingService.SaveSetting(settings);
 
             //locales
             this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.RedirectionTip", "You will be redirected to Assist site to complete the order.");
             this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.GatewayUrl", "Gateway URL");
             this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.GatewayUrl.Hint", "Enter gateway URL.");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.ShopId", "Shop ID");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.ShopId.Hint", "Enter shop ID.");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.MerchantId", "Merchant ID");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.MerchantId.Hint", "Enter your merchant identifier.");
             this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.AuthorizeOnly", "Authorize only");
             this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.AuthorizeOnly.Hint", "Authorize only?");
             this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.TestMode", "Test mode");
@@ -285,8 +287,8 @@ namespace Nop.Plugin.Payments.Assist
             this.DeletePluginLocaleResource("Plugins.Payments.Assist.RedirectionTip");
             this.DeletePluginLocaleResource("Plugins.Payments.Assist.GatewayUrl");
             this.DeletePluginLocaleResource("Plugins.Payments.Assist.GatewayUrl.Hint");
-            this.DeletePluginLocaleResource("Plugins.Payments.Assist.ShopId");
-            this.DeletePluginLocaleResource("Plugins.Payments.Assist.ShopId.Hint");
+            this.DeletePluginLocaleResource("Plugins.Payments.Assist.MerchantId");
+            this.DeletePluginLocaleResource("Plugins.Payments.Assist.MerchantId.Hint");
             this.DeletePluginLocaleResource("Plugins.Payments.Assist.AuthorizeOnly");
             this.DeletePluginLocaleResource("Plugins.Payments.Assist.AuthorizeOnly.Hint");
             this.DeletePluginLocaleResource("Plugins.Payments.Assist.TestMode");
