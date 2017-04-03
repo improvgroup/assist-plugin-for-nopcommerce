@@ -9,5 +9,7 @@ namespace Nop.Plugin.Payments.Assist
         public bool AuthorizeOnly { get; set; }
         public bool TestMode { get; set; }
         public decimal AdditionalFee { get; set; }
+        public string Login { get; set; }
+        public string Password { get; set; }
     }
 }
