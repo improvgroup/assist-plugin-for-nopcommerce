@@ -27,11 +27,11 @@
         </tr>
         <tr>
             <td class="adminTitle">
-                @Html.NopLabelFor(model => model.ShopId):
+                @Html.NopLabelFor(model => model.MerchantId):
             </td>
             <td class="adminData">
-                @Html.EditorFor(model => model.ShopId)
-                @Html.ValidationMessageFor(model => model.ShopId)
+                @Html.EditorFor(model => model.MerchantId)
+                @Html.ValidationMessageFor(model => model.MerchantId)
             </td>
         </tr>
         <tr>
@@ -59,6 +59,24 @@
             <td class="adminData">
                 @Html.EditorFor(model => model.AdditionalFee)
                 @Html.ValidationMessageFor(model => model.AdditionalFee)
+            </td>
+        </tr>
+        <tr>
+            <td class="adminTitle">
+                @Html.NopLabelFor(model => model.Login):
+            </td>
+            <td class="adminData">
+                @Html.EditorFor(model => model.Login)
+                @Html.ValidationMessageFor(model => model.Login)
+            </td>
+        </tr>
+        <tr>
+            <td class="adminTitle">
+                @Html.NopLabelFor(model => model.Password):
+            </td>
+            <td class="adminData">
+                @Html.EditorFor(model => model.Password)
+                @Html.ValidationMessageFor(model => model.Password)
             </td>
         </tr>
         <tr>

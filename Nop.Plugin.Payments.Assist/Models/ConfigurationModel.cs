@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using Nop.Web.Framework;
+﻿using Nop.Web.Framework;
 using Nop.Web.Framework.Mvc;
 
 namespace Nop.Plugin.Payments.Assist.Models
@@ -9,8 +8,8 @@ namespace Nop.Plugin.Payments.Assist.Models
         [NopResourceDisplayName("Plugins.Payments.Assist.GatewayUrl")]
         public string GatewayUrl { get; set; }
 
-        [NopResourceDisplayName("Plugins.Payments.Assist.ShopId")]
-        public string ShopId { get; set; }
+        [NopResourceDisplayName("Plugins.Payments.Assist.MerchantId")]
+        public string MerchantId { get; set; }
 
         [NopResourceDisplayName("Plugins.Payments.Assist.AuthorizeOnly")]
         public bool AuthorizeOnly { get; set; }
@@ -20,5 +19,11 @@ namespace Nop.Plugin.Payments.Assist.Models
 
         [NopResourceDisplayName("Plugins.Payments.Assist.AdditionalFee")]
         public decimal AdditionalFee { get; set; }
+
+        [NopResourceDisplayName("Plugins.Payments.Assist.Login")]
+        public string Login { get; set; }
+
+        [NopResourceDisplayName("Plugins.Payments.Assist.Password")]
+        public string Password { get; set; }
     }
 }

@@ -4,7 +4,6 @@ using Nop.Core;
 using Nop.Core.Domain.Payments;
 using Nop.Plugin.Payments.Assist.Models;
 using Nop.Services.Configuration;
-using Nop.Services.Logging;
 using Nop.Services.Orders;
 using Nop.Services.Payments;
 using Nop.Web.Framework.Controllers;
@@ -42,12 +41,17 @@ namespace Nop.Plugin.Payments.Assist.Controllers
         [ChildActionOnly]
         public ActionResult Configure()
         {
-            var model = new ConfigurationModel();
-            model.GatewayUrl = _assistPaymentSettings.GatewayUrl;
-            model.ShopId = _assistPaymentSettings.ShopId;
-            model.AuthorizeOnly = _assistPaymentSettings.AuthorizeOnly;
-            model.TestMode = _assistPaymentSettings.TestMode;
-            model.AdditionalFee = _assistPaymentSettings.AdditionalFee;
+            var model = new ConfigurationModel
+            {
+                GatewayUrl = _assistPaymentSettings.GatewayUrl,
+                MerchantId = _assistPaymentSettings.MerchantId,
+                AuthorizeOnly = _assistPaymentSettings.AuthorizeOnly,
+                TestMode = _assistPaymentSettings.TestMode,
+                AdditionalFee = _assistPaymentSettings.AdditionalFee,
+                Login = _assistPaymentSettings.Login,
+                Password = _assistPaymentSettings.Password
+
+            };
 
             return View("~/Plugins/Payments.Assist/Views/PaymentAssist/Configure.cshtml", model);
         }
@@ -62,10 +66,12 @@ namespace Nop.Plugin.Payments.Assist.Controllers
 
             //save settings
             _assistPaymentSettings.GatewayUrl = model.GatewayUrl;
-            _assistPaymentSettings.ShopId = model.ShopId;
+            _assistPaymentSettings.MerchantId = model.MerchantId;
             _assistPaymentSettings.AuthorizeOnly = model.AuthorizeOnly;
             _assistPaymentSettings.TestMode = model.TestMode;
             _assistPaymentSettings.AdditionalFee = model.AdditionalFee;
+            _assistPaymentSettings.Login = model.Login;
+            _assistPaymentSettings.Password = model.Password;
             _settingService.SaveSetting(_assistPaymentSettings);
             
             return Configure();
@@ -74,8 +80,7 @@ namespace Nop.Plugin.Payments.Assist.Controllers
         [ChildActionOnly]
         public ActionResult PaymentInfo()
         {
-            var model = new PaymentInfoModel();
-            return View("~/Plugins/Payments.Assist/Views/PaymentAssist/PaymentInfo.cshtml", model);
+            return View("~/Plugins/Payments.Assist/Views/PaymentAssist/PaymentInfo.cshtml");
         }
 
         [NonAction]
@@ -100,14 +105,12 @@ namespace Nop.Plugin.Payments.Assist.Controllers
                 !processor.IsPaymentMethodActive(_paymentSettings) || !processor.PluginDescriptor.Installed)
                 throw new NopException("Assist module cannot be loaded");
 
-            //UNDONE: we should ensure this page is submitted by Assist; otherwise, everybody can mark his own order as paid
-            //uncomment the libe below when it's ready
-            return RedirectToAction("Index", "Home", new { area = "" });
-
-
-            var order = _orderService.GetOrderById(_webHelper.QueryString<int>("Order_IDP"));
+            var order = _orderService.GetOrderById(_webHelper.QueryString<int>("ordernumber"));
             if (order == null || order.Deleted || _workContext.CurrentCustomer.Id != order.CustomerId)
-                return new HttpUnauthorizedResult();
+                return RedirectToRoute("HomePage");
+
+            if (!processor.CheckPaymentStatus(order))
+                return RedirectToRoute("HomePage");
 
             if (_assistPaymentSettings.AuthorizeOnly)
             {

@@ -82,7 +82,6 @@
     <Compile Include="AssistPaymentSettings.cs" />
     <Compile Include="Controllers\PaymentAssistController.cs" />
     <Compile Include="Models\ConfigurationModel.cs" />
-    <Compile Include="Models\PaymentInfoModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RouteProvider.cs" />
   </ItemGroup>
