@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using Nop.Web.Framework;
+﻿using Nop.Web.Framework;
 using Nop.Web.Framework.Mvc;
 
 namespace Nop.Plugin.Payments.Assist.Models
@@ -20,5 +19,11 @@ namespace Nop.Plugin.Payments.Assist.Models
 
         [NopResourceDisplayName("Plugins.Payments.Assist.AdditionalFee")]
         public decimal AdditionalFee { get; set; }
+
+        [NopResourceDisplayName("Plugins.Payments.Assist.Login")]
+        public string Login { get; set; }
+
+        [NopResourceDisplayName("Plugins.Payments.Assist.Password")]
+        public string Password { get; set; }
     }
 }

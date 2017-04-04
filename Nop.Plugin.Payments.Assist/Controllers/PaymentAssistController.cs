@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.Web.Mvc;
 using Nop.Core;
 using Nop.Core.Domain.Payments;
@@ -65,7 +64,9 @@ namespace Nop.Plugin.Payments.Assist.Controllers
                 GatewayUrl = _assistPaymentSettings.GatewayUrl,
                 AuthorizeOnly = _assistPaymentSettings.AuthorizeOnly,
                 TestMode = _assistPaymentSettings.TestMode,
-                AdditionalFee = _assistPaymentSettings.AdditionalFee
+                AdditionalFee = _assistPaymentSettings.AdditionalFee,
+                Login = _assistPaymentSettings.Login,
+                Password = _assistPaymentSettings.Password
             };
 
             return View("~/Plugins/Payments.Assist/Views/PaymentAssist/Configure.cshtml", model);
@@ -85,6 +86,8 @@ namespace Nop.Plugin.Payments.Assist.Controllers
             _assistPaymentSettings.AuthorizeOnly = model.AuthorizeOnly;
             _assistPaymentSettings.TestMode = model.TestMode;
             _assistPaymentSettings.AdditionalFee = model.AdditionalFee;
+            _assistPaymentSettings.Login = model.Login;
+            _assistPaymentSettings.Password = model.Password;
 
             _settingService.SaveSetting(_assistPaymentSettings);
 
@@ -126,7 +129,7 @@ namespace Nop.Plugin.Payments.Assist.Controllers
 
             var order = _orderService.GetOrderById(_webHelper.QueryString<int>("ordernumber"));
             if (order == null || order.Deleted || _workContext.CurrentCustomer.Id != order.CustomerId)
-                return new HttpUnauthorizedResult();
+                return RedirectToRoute("HomePage");
 
             return RedirectToRoute("OrderDetails", new { orderId = order.Id });
         }
@@ -143,7 +146,10 @@ namespace Nop.Plugin.Payments.Assist.Controllers
 
             var order = _orderService.GetOrderById(_webHelper.QueryString<int>("ordernumber"));
             if (order == null || order.Deleted || _workContext.CurrentCustomer.Id != order.CustomerId)
-                return new HttpUnauthorizedResult();
+                return RedirectToRoute("HomePage");
+
+            if (!processor.CheckPaymentStatus(order))
+                return RedirectToRoute("HomePage");
 
             if (_assistPaymentSettings.AuthorizeOnly)
             {

@@ -1,7 +1,7 @@
 ﻿Group: Payment methods
 FriendlyName: Assist (Russia)
 SystemName: Payments.Assist
-Version: 1.10
+Version: 1.11
 SupportedVersions: 3.80
 Author: nopCommerce team
 DisplayOrder: 1
