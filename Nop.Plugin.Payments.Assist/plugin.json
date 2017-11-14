@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Payment methods",
+  "FriendlyName": "Assist (Russia)",
+  "SystemName": "Payments.Assist",
+  "Version": "1.30",
+  "SupportedVersions": [ "4.00" ],
+  "Author": "nopCommerce team",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.Payments.Assist.dll",
+  "Description": "This plugin allows you to integrate with Assist payment module"
+}

@@ -4,8 +4,9 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.Net;
-using System.Web.Routing;
 using System.Xml.Linq;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Nop.Core;
 using Nop.Core.Domain.Directory;
 using Nop.Core.Domain.Orders;
@@ -104,10 +105,10 @@ namespace Nop.Plugin.Payments.Assist
                     try
                     {
                         var doc = XDocument.Parse(rez);
-                        var orderElement = doc.Root.Return(e => e.Element("order"), new XElement("order"));
+                        var orderElement = doc.Root?.Element("order") ?? new XElement("order");
 
-                        var flag = string.Format(CultureInfo.InvariantCulture, "{0:0.00}", order.OrderTotal) == orderElement.Return(e => e.Element("orderamount"), new XElement("orderamount", "0.00")).Value;
-                        flag = flag && orderElement.Return(e => e.Element("orderstate"), new XElement("orderstate")).Value == "Approved";
+                        var flag = string.Format(CultureInfo.InvariantCulture, "{0:0.00}", order.OrderTotal) == (orderElement.Element("orderamount") ?? new XElement("orderamount", "0.00")).Value;
+                        flag = flag && (orderElement.Element("orderstate") ?? new XElement("orderstate")).Value == "Approved";
 
                         return flag;
                     }
@@ -123,7 +124,7 @@ namespace Nop.Plugin.Payments.Assist
         {
             var server = (_assistPaymentSettings.TestMode ? TestAssistPaymentUrl : _assistPaymentSettings.GatewayUrl).TrimEnd('/');
 
-            return string.Format("{0}/{1}", server, command);
+            return $"{server}/{command}";
         }
 
         /// <summary>
@@ -136,6 +137,25 @@ namespace Nop.Plugin.Payments.Assist
             var result = new ProcessPaymentResult { NewPaymentStatus = PaymentStatus.Pending };
 
             return result;
+        }
+
+        public IList<string> ValidatePaymentForm(IFormCollection form)
+        {
+            var warnings = new List<string>();
+
+            return warnings;
+        }
+
+        public ProcessPaymentRequest GetPaymentInfo(IFormCollection form)
+        {
+            var paymentInfo = new ProcessPaymentRequest();
+
+            return paymentInfo;
+        }
+
+        public override string GetConfigurationPageUrl()
+        {
+            return $"{_webHelper.GetStoreLocation()}Admin/PaymentAssist/Configure";
         }
 
         /// <summary>
@@ -156,8 +176,8 @@ namespace Nop.Plugin.Payments.Assist
             post.Add("OrderNumber", postProcessPaymentRequest.Order.Id.ToString());
             post.Add("OrderAmount", string.Format(CultureInfo.InvariantCulture, "{0:0.00}", postProcessPaymentRequest.Order.OrderTotal));
             post.Add("OrderCurrency", _currencyService.GetCurrencyById(_currencySettings.PrimaryStoreCurrencyId).CurrencyCode);
-            post.Add("URL_RETURN", string.Format("{0}Plugins/PaymentAssist/Fail", _webHelper.GetStoreLocation()));
-            post.Add("URL_RETURN_OK", string.Format("{0}Plugins/PaymentAssist/Return", _webHelper.GetStoreLocation()));
+            post.Add("URL_RETURN", $"{_webHelper.GetStoreLocation()}Plugins/PaymentAssist/Fail");
+            post.Add("URL_RETURN_OK", $"{_webHelper.GetStoreLocation()}Plugins/PaymentAssist/Return");
             post.Add("FirstName", postProcessPaymentRequest.Order.BillingAddress.FirstName);
             post.Add("LastName", postProcessPaymentRequest.Order.BillingAddress.LastName);
             post.Add("Email", postProcessPaymentRequest.Order.BillingAddress.Email);
@@ -284,7 +304,7 @@ namespace Nop.Plugin.Payments.Assist
         public bool CanRePostProcessPayment(Order order)
         {
             if (order == null)
-                throw new ArgumentNullException("order");
+                throw new ArgumentNullException(nameof(order));
 
             //Assist is the redirection payment method
             //It also validates whether order is also paid (after redirection) so customers will not be able to pay twice
@@ -384,6 +404,12 @@ namespace Nop.Plugin.Payments.Assist
 
             base.Uninstall();
         }
+
+        public void GetPublicViewComponent(out string viewComponentName)
+        {
+            viewComponentName = "PaymentAssist";
+        }
+
         #endregion
 
         #region Properies

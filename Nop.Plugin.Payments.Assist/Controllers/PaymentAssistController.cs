@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Web.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Nop.Core;
 using Nop.Core.Domain.Payments;
 using Nop.Plugin.Payments.Assist.Models;
@@ -7,7 +6,10 @@ using Nop.Services.Configuration;
 using Nop.Services.Localization;
 using Nop.Services.Orders;
 using Nop.Services.Payments;
+using Nop.Services.Security;
+using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
+using Nop.Web.Framework.Mvc.Filters;
 
 namespace Nop.Plugin.Payments.Assist.Controllers
 {
@@ -24,6 +26,7 @@ namespace Nop.Plugin.Payments.Assist.Controllers
         private readonly ILocalizationService _localizationService;
         private readonly AssistPaymentSettings _assistPaymentSettings;
         private readonly PaymentSettings _paymentSettings;
+        private readonly IPermissionService _permissionService;
 
         #endregion
 
@@ -37,7 +40,8 @@ namespace Nop.Plugin.Payments.Assist.Controllers
             IWorkContext workContext, 
             ILocalizationService localizationService,
             AssistPaymentSettings assistPaymentSettings,
-            PaymentSettings paymentSettings)
+            PaymentSettings paymentSettings,
+            IPermissionService permissionService)
         {
             this._settingService = settingService;
             this._paymentService = paymentService;
@@ -48,16 +52,20 @@ namespace Nop.Plugin.Payments.Assist.Controllers
             this._localizationService = localizationService;
             this._assistPaymentSettings = assistPaymentSettings;
             this._paymentSettings = paymentSettings;
+            this._permissionService = permissionService;
         }
 
         #endregion
 
         #region Methods
 
-        [AdminAuthorize]
-        [ChildActionOnly]
-        public ActionResult Configure()
+        [AuthorizeAdmin]
+        [Area(AreaNames.Admin)]
+        public IActionResult Configure()
         {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManagePaymentMethods))
+                return AccessDeniedView();
+
             var model = new ConfigurationModel
             {
                 MerchantId = _assistPaymentSettings.MerchantId,
@@ -73,10 +81,13 @@ namespace Nop.Plugin.Payments.Assist.Controllers
         }
 
         [HttpPost]
-        [AdminAuthorize]
-        [ChildActionOnly]
-        public ActionResult Configure(ConfigurationModel model)
+        [AuthorizeAdmin]
+        [Area(AreaNames.Admin)]
+        public IActionResult Configure(ConfigurationModel model)
         {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManagePaymentMethods))
+                return AccessDeniedView();
+
             if (!ModelState.IsValid)
                 return Configure();
 
@@ -95,30 +106,8 @@ namespace Nop.Plugin.Payments.Assist.Controllers
 
             return Configure();
         }
-
-        [ChildActionOnly]
-        public ActionResult PaymentInfo()
-        {
-            return View("~/Plugins/Payments.Assist/Views/PaymentInfo.cshtml");
-        }
-
-        [NonAction]
-        public override IList<string> ValidatePaymentForm(FormCollection form)
-        {
-            var warnings = new List<string>();
-
-            return warnings;
-        }
-
-        [NonAction]
-        public override ProcessPaymentRequest GetPaymentInfo(FormCollection form)
-        {
-            var paymentInfo = new ProcessPaymentRequest();
-
-            return paymentInfo;
-        }
-
-        public ActionResult Fail(FormCollection form)
+        
+        public IActionResult Fail()
         {
             var processor = _paymentService.LoadPaymentMethodBySystemName("Payments.Assist") as AssistPaymentProcessor;
 
@@ -134,8 +123,7 @@ namespace Nop.Plugin.Payments.Assist.Controllers
             return RedirectToRoute("OrderDetails", new { orderId = order.Id });
         }
 
-        [ValidateInput(false)]
-        public ActionResult Return(FormCollection form)
+        public IActionResult Return()
         {
             var processor = _paymentService.LoadPaymentMethodBySystemName("Payments.Assist") as AssistPaymentProcessor;
 

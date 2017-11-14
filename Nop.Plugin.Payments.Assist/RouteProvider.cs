@@ -1,6 +1,6 @@
-﻿using System.Web.Mvc;
-using System.Web.Routing;
-using Nop.Web.Framework.Mvc.Routes;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
+using Nop.Web.Framework.Mvc.Routing;
 
 namespace Nop.Plugin.Payments.Assist
 {
@@ -8,20 +8,16 @@ namespace Nop.Plugin.Payments.Assist
     {
         #region Methods
 
-        public void RegisterRoutes(RouteCollection routes)
+        public void RegisterRoutes(IRouteBuilder routeBuilder)
         {
             //return
-            routes.MapRoute("Plugin.Payments.Assist.Return",
-                 "Plugins/PaymentAssist/Return",
-                 new { controller = "PaymentAssist", action = "Return" },
-                 new[] { "Nop.Plugin.Payments.Assist.Controllers" }
-            );
+            routeBuilder.MapRoute("Plugin.Payments.Assist.Return",
+                "Plugins/PaymentAssist/Return",
+                new {controller = "PaymentAssist", action = "Return"});
             //fail
-            routes.MapRoute("Plugin.Payments.Assist.Fail",
-                 "Plugins/PaymentAssist/Fail",
-                 new { controller = "PaymentAssist", action = "Fail" },
-                 new[] { "Nop.Plugin.Payments.Assist.Controllers" }
-            );
+            routeBuilder.MapRoute("Plugin.Payments.Assist.Fail",
+                "Plugins/PaymentAssist/Fail",
+                new {controller = "PaymentAssist", action = "Fail"});
         }
 
         #endregion
