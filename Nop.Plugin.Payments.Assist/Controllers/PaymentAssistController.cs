@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Nop.Core;
-using Nop.Core.Domain.Payments;
 using Nop.Plugin.Payments.Assist.Models;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
@@ -25,7 +24,6 @@ namespace Nop.Plugin.Payments.Assist.Controllers
         private readonly IWorkContext _workContext;
         private readonly ILocalizationService _localizationService;
         private readonly AssistPaymentSettings _assistPaymentSettings;
-        private readonly PaymentSettings _paymentSettings;
         private readonly IPermissionService _permissionService;
 
         #endregion
@@ -40,7 +38,6 @@ namespace Nop.Plugin.Payments.Assist.Controllers
             IWorkContext workContext, 
             ILocalizationService localizationService,
             AssistPaymentSettings assistPaymentSettings,
-            PaymentSettings paymentSettings,
             IPermissionService permissionService)
         {
             this._settingService = settingService;
@@ -51,7 +48,6 @@ namespace Nop.Plugin.Payments.Assist.Controllers
             this._workContext = workContext;
             this._localizationService = localizationService;
             this._assistPaymentSettings = assistPaymentSettings;
-            this._paymentSettings = paymentSettings;
             this._permissionService = permissionService;
         }
 
@@ -112,7 +108,7 @@ namespace Nop.Plugin.Payments.Assist.Controllers
             var processor = _paymentService.LoadPaymentMethodBySystemName("Payments.Assist") as AssistPaymentProcessor;
 
             if (processor == null
-                || !processor.IsPaymentMethodActive(_paymentSettings)
+                || !_paymentService.IsPaymentMethodActive(processor)
                 || !processor.PluginDescriptor.Installed)
                 throw new NopException("Assist module cannot be loaded");
 
@@ -128,7 +124,7 @@ namespace Nop.Plugin.Payments.Assist.Controllers
             var processor = _paymentService.LoadPaymentMethodBySystemName("Payments.Assist") as AssistPaymentProcessor;
 
             if (processor == null 
-                || !processor.IsPaymentMethodActive(_paymentSettings) 
+                || !_paymentService.IsPaymentMethodActive(processor) 
                 || !processor.PluginDescriptor.Installed)
                 throw new NopException("Assist module cannot be loaded");
 

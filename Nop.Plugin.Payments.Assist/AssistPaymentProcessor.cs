@@ -362,22 +362,22 @@ namespace Nop.Plugin.Payments.Assist
             _settingService.SaveSetting(settings);
 
             //locales
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.RedirectionTip", "You will be redirected to Assist site to complete the order.");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.GatewayUrl", "Gateway URL");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.GatewayUrl.Hint", "Enter gateway URL.");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.MerchantId", "Merchant ID");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.MerchantId.Hint", "Enter your merchant identifier.");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.AuthorizeOnly", "Authorize only");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.AuthorizeOnly.Hint", "Authorize only?");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.TestMode", "Test mode");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.TestMode.Hint", "Is test mode?");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.AdditionalFee", "Additional fee");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.AdditionalFee.Hint", "Enter additional fee to charge your customers.");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.PaymentMethodDescription", "You will be redirected to Assist site to complete the order.");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.Password", "Password");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.Password.Hint", "Set the password.");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.Login", "Login");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.Login.Hint", "Set the login.");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.RedirectionTip", "You will be redirected to Assist site to complete the order.");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.GatewayUrl", "Gateway URL");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.GatewayUrl.Hint", "Enter gateway URL.");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.MerchantId", "Merchant ID");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.MerchantId.Hint", "Enter your merchant identifier.");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.AuthorizeOnly", "Authorize only");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.AuthorizeOnly.Hint", "Authorize only?");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.TestMode", "Test mode");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.TestMode.Hint", "Is test mode?");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.AdditionalFee", "Additional fee");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.AdditionalFee.Hint", "Enter additional fee to charge your customers.");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.PaymentMethodDescription", "You will be redirected to Assist site to complete the order.");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.Password", "Password");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.Password.Hint", "Set the password.");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.Login", "Login");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Assist.Login.Hint", "Set the login.");
 
             base.Install();
         }
@@ -385,29 +385,29 @@ namespace Nop.Plugin.Payments.Assist
         public override void Uninstall()
         {
             //locales
-            this.DeletePluginLocaleResource("Plugins.Payments.Assist.RedirectionTip");
-            this.DeletePluginLocaleResource("Plugins.Payments.Assist.GatewayUrl");
-            this.DeletePluginLocaleResource("Plugins.Payments.Assist.GatewayUrl.Hint");
-            this.DeletePluginLocaleResource("Plugins.Payments.Assist.MerchantId");
-            this.DeletePluginLocaleResource("Plugins.Payments.Assist.MerchantId.Hint");
-            this.DeletePluginLocaleResource("Plugins.Payments.Assist.AuthorizeOnly");
-            this.DeletePluginLocaleResource("Plugins.Payments.Assist.AuthorizeOnly.Hint");
-            this.DeletePluginLocaleResource("Plugins.Payments.Assist.TestMode");
-            this.DeletePluginLocaleResource("Plugins.Payments.Assist.TestMode.Hint");
-            this.DeletePluginLocaleResource("Plugins.Payments.Assist.AdditionalFee");
-            this.DeletePluginLocaleResource("Plugins.Payments.Assist.AdditionalFee.Hint");
-            this.DeletePluginLocaleResource("Plugins.Payments.Assist.PaymentMethodDescription");
-            this.DeletePluginLocaleResource("Plugins.Payments.Assist.Password");
-            this.DeletePluginLocaleResource("Plugins.Payments.Assist.Password.Hint");
-            this.DeletePluginLocaleResource("Plugins.Payments.Assist.Login");
-            this.DeletePluginLocaleResource("Plugins.Payments.Assist.Login.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Assist.RedirectionTip");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Assist.GatewayUrl");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Assist.GatewayUrl.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Assist.MerchantId");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Assist.MerchantId.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Assist.AuthorizeOnly");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Assist.AuthorizeOnly.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Assist.TestMode");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Assist.TestMode.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Assist.AdditionalFee");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Assist.AdditionalFee.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Assist.PaymentMethodDescription");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Assist.Password");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Assist.Password.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Assist.Login");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Assist.Login.Hint");
 
             base.Uninstall();
         }
 
-        public void GetPublicViewComponent(out string viewComponentName)
+        public string GetPublicViewComponentName()
         {
-            viewComponentName = "PaymentAssist";
+            return "PaymentAssist";
         }
 
         #endregion
